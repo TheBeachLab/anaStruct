@@ -30,7 +30,7 @@ class Plotter(PlottingValues):
         width = height = PATCH_SIZE * max_val
         for node in self.system.supports_fixed:
             support_patch = mpatches.Rectangle((node.vertex.x - width * 0.5, - node.vertex.z - width * 0.5),
-                                               width, height, color='r', zorder=9)
+                                               width, height, hatch='//', linewidth=0, color=('#f6d04d7f'), zorder=9)
             self.one_fig.add_patch(support_patch)
 
     def __hinged_support_patch(self, max_val):
