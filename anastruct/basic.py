@@ -1,5 +1,6 @@
 import numpy as np
 import collections
+
 try:
     from anastruct.cython.cbasic import converge, angle_x_axis
 except ImportError:
@@ -14,7 +15,7 @@ def find_nearest(array, value):
     """
     # Subtract the value of the value's in the array. Make the values absolute.
     # The lowest value is the nearest.
-    index = (np.abs(array-value)).argmin()
+    index = (np.abs(array - value)).argmin()
     return array[index], index
 
 
@@ -50,3 +51,24 @@ def args_to_lists(*args):
         else:
             args.append([arg[0] for _ in range(n)])
     return args
+
+
+def rotation_matrix(angle):
+    """
+
+    :param angle: (flt) angle in radians
+    :return: rotated euclidean xy matrix
+    """
+    s = np.sin(angle)
+    c = np.cos(angle)
+    return np.array([[c, -s], [s, c]])
+
+
+def rotate_xy(a, angle):
+    b = np.array(a)
+    b[:, 0] -= a[0, 0]
+    b[:, 1] -= a[0, 1]
+    b = np.dot(b, rotation_matrix(angle))
+    b[:, 0] += a[0, 0]
+    b[:, 1] += a[0, 1]
+    return b

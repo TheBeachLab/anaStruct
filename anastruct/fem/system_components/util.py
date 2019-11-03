@@ -19,7 +19,12 @@ def ensure_single_hinge(system, spring, node_id1, node_id2):
                 system.node_map[node_id].hinge = True
 
                 if len(system.node_map[node_id].elements) > 0:
-                    pass_hinge = not all([el.hinge == node for el in system.node_map[node_id].elements.values()])
+                    pass_hinge = not all(
+                        [
+                            el.hinge == node
+                            for el in system.node_map[node_id].elements.values()
+                        ]
+                    )
                 else:
                     pass_hinge = True
                 if not pass_hinge:
@@ -69,7 +74,9 @@ def det_node_ids(system, point_1, point_2):
 
 def support_check(system, node_id):
     if system.node_map[node_id].hinge:
-        raise FEMException ("Flawed inputs", "You cannot add a support to a hinged node.")
+        raise FEMException(
+            "Flawed inputs", "You cannot add a support to a hinged node."
+        )
 
 
 def force_elements_orientation(point_1, point_2, node_id1, node_id2, spring, mp):
@@ -83,14 +90,14 @@ def force_elements_orientation(point_1, point_2, node_id1, node_id2, spring, mp)
     # determine the angle of the element with the global x-axis
     delta_x = point_2.x - point_1.x
     delta_z = point_2.z - point_1.z  # minus sign to work with an opposite z-axis
-    ai = -angle_x_axis(delta_x, delta_z)
+    angle = -angle_x_axis(delta_x, delta_z)
 
     if delta_x < 0:
         # switch points
         point_1, point_2 = point_2, point_1
         node_id1, node_id2 = node_id2, node_id1
 
-        ai = -angle_x_axis(-delta_x, -delta_z)
+        angle = -angle_x_axis(-delta_x, -delta_z)
 
         if spring is not None:
             assert type(spring) == dict, "The spring parameter should be a dictionary."
@@ -108,4 +115,4 @@ def force_elements_orientation(point_1, point_2, node_id1, node_id2, spring, mp)
                 mp[2] = mp.pop(1)
             elif 2 in mp:
                 mp[1] = mp.pop(2)
-    return point_1, point_2, node_id1, node_id2, spring, mp, ai
+    return point_1, point_2, node_id1, node_id2, spring, mp, angle

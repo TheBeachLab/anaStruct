@@ -1,6 +1,7 @@
 import numpy as np
 import copy
 from anastruct.basic import converge
+import logging
 from scipy import linalg
 
 
@@ -15,11 +16,12 @@ def stiffness_adaptation(system, verbosity, max_iter):
     """
     system.solve(True, naked=True)
     if verbosity == 0:
-        print("Starting stiffness adaptation calculation.")
+        logging.info("Starting stiffness adaptation calculation.")
 
     # check validity
-    assert all([mp > 0 for mpd in system.non_linear_elements.values() for mp in mpd]), \
-        "Cannot solve for an mp = 0. If you want a hinge set the spring stiffness equal to 0."
+    assert all(
+        [mp > 0 for mpd in system.non_linear_elements.values() for mp in mpd]
+    ), "Cannot solve for an mp = 0. If you want a hinge set the spring stiffness equal to 0."
 
     for c in range(max_iter):
         factors = []
@@ -31,10 +33,14 @@ def stiffness_adaptation(system, verbosity, max_iter):
             for node_no, mp in v.items():
                 if node_no == 1:
                     # Fast Ty
-                    m_e = el.element_force_vector[2] + el.element_primary_force_vector[2]
+                    m_e = (
+                        el.element_force_vector[2] + el.element_primary_force_vector[2]
+                    )
                 else:
                     # Fast Ty
-                    m_e = el.element_force_vector[5] + el.element_primary_force_vector[5]
+                    m_e = (
+                        el.element_force_vector[5] + el.element_primary_force_vector[5]
+                    )
 
                 if abs(m_e) > mp:
                     el.nodes_plastic[node_no - 1] = True
@@ -53,9 +59,13 @@ def stiffness_adaptation(system, verbosity, max_iter):
             break
 
     if c == max_iter - 1:
-        print("Couldn't solve the in the amount of iterations given.")
+        logging.warning(
+            "Couldn't solve the in the amount of iterations given. max_iter={}".format(
+                max_iter
+            )
+        )
     elif verbosity == 0:
-        print("Solved in {} iterations".format(c))
+        logging.info("Solved in {} iterations".format(c))
     return system.system_displacement_vector
 
 
@@ -98,7 +108,9 @@ def det_linear_buckling(system):
     return np.min(eigenvalues)
 
 
-def geometrically_non_linear(system, verbosity=0, buckling_factor=True, discretize_kwargs=None):
+def geometrically_non_linear(
+    system, verbosity=0, buckling_factor=True, discretize_kwargs=None
+):
     """
 
     :param system: (SystemElements)
@@ -110,7 +122,7 @@ def geometrically_non_linear(system, verbosity=0, buckling_factor=True, discreti
     """
     # https://www.ethz.ch/content/dam/ethz/special-interest/baug/ibk/structural-mechanics-dam/education/femI/Lecture_2b.pdf
     if verbosity == 0:
-        print("Starting geometrical non linear calculation")
+        logging.info("Starting geometrical non linear calculation")
 
     if buckling_factor:
         buckling_system = copy.copy(system)
@@ -129,6 +141,3 @@ def geometrically_non_linear(system, verbosity=0, buckling_factor=True, discreti
     system.solve()
 
     return buckling_factor
-
-
-
