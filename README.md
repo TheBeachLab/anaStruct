@@ -16,13 +16,7 @@ Analyse 2D Frames and trusses for slender structures. Determine the bending mome
 For the actively developed version:
 
 ```bash
-$ pip install git+https://github.com/ritchie46/anaStruct.git
-```
-
-Or for a release:
-
-```bash
-$ pip install anastruct
+$ pip install git+https://github.com/thebeachlab/pySTRAN.git
 ```
 
 ## Read the docs!
