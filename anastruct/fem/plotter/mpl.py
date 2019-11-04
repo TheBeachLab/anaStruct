@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+plt.rcParams["font.family"] = "serif"
 import matplotlib.patches as mpatches
 from anastruct.basic import find_nearest, rotate_xy
 from anastruct.fem.plotter.values import (
