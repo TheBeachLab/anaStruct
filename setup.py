@@ -14,7 +14,7 @@ if sys.version_info[0] == 3 and sys.version_info[1] < 5:
 
 setup(
     name='pySTRAN',
-    version='1.0',
+    version='1.01',
     description='structural engineering package',
     author='Francisco Sanchez (forked from Ritchie Vink)',
     author_email='hola@beachlab.org',
